@@ -1,14 +1,15 @@
-package repository.model;
+package com.example.pw_autorizacion_u3_p5_fc.repository.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
 public class Usuario {
 
+    @Id
     @Column(name = "usu_id")
     private Integer id;
 
