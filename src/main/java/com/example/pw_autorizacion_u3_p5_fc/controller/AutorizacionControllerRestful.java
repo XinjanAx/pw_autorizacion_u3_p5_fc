@@ -36,6 +36,7 @@ public class AutorizacionControllerRestful {
          */
         this.autenticacion(usuarioTO.getNombre(), usuarioTO.getContrasenia());
         return this.jwtUtils.buildTokenJwt(usuarioTO.getNombre());
+        //ya tenia de esta misma forma este return desde el taller anterior
     }
     private void autenticacion(String usuario, String password){
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usuario, password);
