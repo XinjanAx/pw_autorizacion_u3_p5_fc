@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AuthEntryPointJwt implements AuthenticationEntryPoint{
 
 
-    //clase q se muestra cundo no se autorisa la autenticacion
+    //clase q se muestra cuando no se autorisa la autenticacion
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
