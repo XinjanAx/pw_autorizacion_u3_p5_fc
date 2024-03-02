@@ -1,46 +1,50 @@
 package com.example.pw_autorizacion_u3_p5_fc.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.pw_autorizacion_u3_p5_fc.security.JwtUtils;
-import com.example.pw_autorizacion_u3_p5_fc.server.to.UsuarioTO;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.pw_autorizacion_u3_p5_fc.security.JwtUtils;
+import com.example.pw_autorizacion_u3_p5_fc.server.to.UsuarioTO;
 
 
 
 @RestController
-@RequestMapping("/autorizaciones")
+@RequestMapping("/tokens")
+@CrossOrigin
 public class AutorizacionControllerRestful {
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    private static final Logger LOG = LoggerFactory.getLogger(JwtUtils.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @GetMapping(path="/jwt",consumes = MediaType.APPLICATION_JSON_VALUE)   
-    public String obtenerToken(@RequestBody UsuarioTO usuarioTO){
-        /*
-         * autenticacion
-         * validarcel usuario y el password
-         * si es correcto mando el token
-         */
-        this.autenticacion(usuarioTO.getNombre(), usuarioTO.getContrasenia());
-        return this.jwtUtils.buildTokenJwt(usuarioTO.getNombre());
-        //ya tenia de esta misma forma este return desde el taller anterior
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @PostMapping(path = "/obtener/{semilla}/{tiempo}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    private String getToken(@RequestBody UsuarioTO usuarioTO, @PathVariable String semilla, @PathVariable int tiempo) {
+        LOG.info(usuarioTO.getContrasenia());
+        this.authenticated(usuarioTO.getNombre(), usuarioTO.getContrasenia());
+        return this.jwtUtils.generateJwtToken(usuarioTO.getNombre(),semilla, tiempo);
     }
-    private void autenticacion(String usuario, String password){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usuario, password);
-        Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+
+    private void authenticated(String username, String password) {
+        Authentication authentication = this.authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
 }
